@@ -12,12 +12,13 @@ const jwt = require('@fastify/jwt')
 module.exports = fp(async function (fastify, opts) {
 
     const secret = process.env.SECRET || "foobar"
+    const expiresIn = process.env.EXPIRESIN || "foobar"
 
     fastify.register(jwt, {
-        secret: 'foobar',
-        cookie: {
-            cookieName: 'token',
-            signed: false
+        secret,
+        sign: {
+            algorithm: "HS256",
+            expiresIn
         }
     })
 

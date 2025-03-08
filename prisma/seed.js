@@ -12,7 +12,8 @@ async function main() {
         data: [
             { email: 'user1@example.com', username: 'user1', first_name: 'John', last_name: 'Doe', password: hashedPassword },
             { email: 'user2@example.com', username: 'user2', first_name: 'Jane', last_name: 'Smith', password: hashedPassword },
-            { email: 'user3@example.com', username: 'user3', first_name: 'Alice', last_name: 'Brown', password: hashedPassword }
+            { email: 'user3@example.com', username: 'user3', first_name: 'Alice', last_name: 'Brown', password: hashedPassword },
+            { email: 'admin@admin.com', username: 'admin', first_name: 'Admin', last_name: 'Admin', password: await argon2.hash(process.env.ADMIN_PASSWORD), role: 4 }
         ],
         skipDuplicates: true, // Évite d'insérer des doublons
     });

@@ -3,6 +3,12 @@
 const fp = require('fastify-plugin')
 const jwt = require('@fastify/jwt')
 
+const USER_ROLE = {
+    USER: 1,
+    PROFESSOR: 2,
+    ADMIN: 3
+}
+
 
 /**
  * This plugins adds some utilities to handle http errors
@@ -12,7 +18,7 @@ const jwt = require('@fastify/jwt')
 module.exports = fp(async function (fastify, opts) {
 
     const secret = process.env.SECRET || "foobar"
-    const expiresIn = process.env.EXPIRESIN || "foobar"
+    const expiresIn = process.env.EXPIRESIN || "60m"
 
     fastify.register(jwt, {
         secret,
@@ -47,7 +53,7 @@ module.exports = fp(async function (fastify, opts) {
                 return reply.status(401).send({ message: "This user does not exist." })
             }
 
-            if (userInfo.role < 3) {
+            if (userInfo.role < USER_ROLE.ADMIN) {
                 return reply.status(401).send({ message: "You are not allowed to perform this action." })
             }
 
@@ -73,7 +79,7 @@ module.exports = fp(async function (fastify, opts) {
                 return reply.status(401).send({ message: "This user does not exist." })
             }
 
-            if (userInfo.role < 2) {
+            if (userInfo.role < USER_ROLE.PROFESSOR) {
                 return reply.status(401).send({ message: "You are not allowed to perform this action." })
             }
 

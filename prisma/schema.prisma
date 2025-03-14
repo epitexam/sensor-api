@@ -14,20 +14,22 @@ datasource db {
 }
 
 model User {
-  id         Int    @id @default(autoincrement())
-  email      String @unique
-  username   String
-  first_name String
-  last_name  String
-  password   String
-  role       Int    @default(1)
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  username     String
+  first_name   String
+  last_name    String
+  password     String
+  role         Int            @default(1)
+  subscription Subscription[]
 }
 
 model Room {
-  id      Int      @id @default(autoincrement())
-  name    String   @unique @db.VarChar(255)
-  volume  Int
-  sensors Sensor[]
+  id           Int            @id @default(autoincrement())
+  name         String         @unique @db.VarChar(255)
+  volume       Int
+  sensors      Sensor[]
+  subscription Subscription[]
 }
 
 model Sensor {
@@ -40,4 +42,14 @@ model Sensor {
   last_updated        DateTime
   Room                Room?    @relation(fields: [roomId], references: [id])
   roomId              Int?
+}
+
+model Subscription {
+  id     Int  @id @default(autoincrement())
+  userId Int
+  roomId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room   Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roomId])
 }

@@ -24,11 +24,10 @@ model User {
 }
 
 model Room {
-  id       Int     @id @default(autoincrement())
-  name     String  @unique @db.VarChar(255)
-  volume   Int
-  sensor   Sensor? @relation(fields: [sensorId], references: [id])
-  sensorId Int?
+  id      Int      @id @default(autoincrement())
+  name    String   @unique @db.VarChar(255)
+  volume  Int
+  sensors Sensor[]
 }
 
 model Sensor {
@@ -39,5 +38,6 @@ model Sensor {
   last_changed        DateTime
   last_reported       DateTime
   last_updated        DateTime
-  Room                Room[]
+  Room                Room?    @relation(fields: [roomId], references: [id])
+  roomId              Int?
 }

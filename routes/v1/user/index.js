@@ -11,6 +11,7 @@ module.exports = async function (fastify, opts) {
     const prisma = fastify.prisma
 
     const selectedUserInfo = {
+        id: true,
         email: true,
         username: true,
         first_name: true,

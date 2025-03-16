@@ -33,15 +33,23 @@ model Room {
 }
 
 model Sensor {
-  id                  Int      @id @default(autoincrement())
-  friendly_name       String   @unique @db.VarChar(255)
+  id                  Int             @id @default(autoincrement())
+  friendly_name       String          @unique @db.VarChar(255)
   unit_of_measurement Int
-  state               Int
-  last_changed        DateTime
-  last_reported       DateTime
-  last_updated        DateTime
-  Room                Room?    @relation(fields: [roomId], references: [id])
+  Room                Room?           @relation(fields: [roomId], references: [id])
   roomId              Int?
+  history             SensorHistory[]
+}
+
+model SensorHistory {
+  id          Int      @id @default(autoincrement())
+  sensorId    Int
+  state       Int
+  recorded_at DateTime @default(now())
+
+  sensor Sensor @relation(fields: [sensorId], references: [id], onDelete: Cascade)
+
+  @@index([sensorId, recorded_at]) // Optimisation pour les requêtes d'historique
 }
 
 model Subscription {

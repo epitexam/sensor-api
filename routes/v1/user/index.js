@@ -10,6 +10,43 @@ module.exports = async function (fastify, opts) {
      * */
     const prisma = fastify.prisma
 
+    const getUserSchema = {
+        body: {
+            type: 'object',
+            properties: {
+                id: { type: 'integer' },
+                username: { type: 'string' },
+                take: { type: 'integer', default: 20 },
+                skip: { type: 'integer', default: 0 }
+            },
+            required: []
+        }
+    }
+
+    const updateUserSchema = {
+        body: {
+            type: 'object',
+            properties: {
+                username: { type: 'string' },
+                email: { type: 'string', format: 'email' },
+                first_name: { type: 'string' },
+                last_name: { type: 'string' },
+                password: { type: 'string', minLength: 8 }
+            },
+            required: []
+        }
+    }
+
+    const deleteUserSchema = {
+        body: {
+            type: 'object',
+            properties: {
+                // No properties required for delete
+            },
+            required: []
+        }
+    }
+
     const selectedUserInfo = {
         id: true,
         email: true,
@@ -18,7 +55,7 @@ module.exports = async function (fastify, opts) {
         last_name: true,
     }
 
-    fastify.get('/', async function (request, reply) {
+    fastify.get('/', { schema: getUserSchema }, async function (request, reply) {
         const { id, username, take = 20, skip = 0 } = request.body
 
         if (id) {
@@ -51,7 +88,7 @@ module.exports = async function (fastify, opts) {
         return reply.status(200).send(usersInfo);
     })
 
-    fastify.put('/', async function (request, reply) {
+    fastify.put('/', { onRequest: [fastify.authenticate], schema: updateUserSchema }, async function (request, reply) {
         const { user } = request
         const { username, email, first_name, last_name, password } = request.body
 
@@ -83,7 +120,7 @@ module.exports = async function (fastify, opts) {
         return reply.status(204).send({ message: "User updated" });
     })
 
-    fastify.delete('/', async function (request, reply) {
+    fastify.delete('/', { onRequest: [fastify.authenticate], schema: deleteUserSchema }, async function (request, reply) {
         const { user } = request
 
         const userInfo = await prisma.user.findUnique({

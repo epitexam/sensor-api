@@ -1,7 +1,6 @@
 'use strict'
 const { PrismaClient } = require('@prisma/client')
 const argon2 = require('argon2');
-const user = require('../admin/user');
 
 module.exports = async function (fastify, opts) {
 
@@ -11,16 +10,28 @@ module.exports = async function (fastify, opts) {
      * */
     const prisma = fastify.prisma
 
+    const selectedUserInfo = {
+        id: true,
+        email: true,
+        username: true,
+        first_name: true,
+        last_name: true,
+    }
+
     const getUserSchema = {
+        description: 'Get user information by ID or username',
+        tags: ['User'],
+        summary: 'Retrieve user information',
         querystring: {
             type: 'object',
             properties: {
                 user_id: { type: 'number', minimum: 1, description: 'User ID' },
-                username: { type: 'string', minLength: 1, maxLength: 50, description: 'Username' },
-                take: { type: 'number', default: 20 },
-                skip: { type: 'number', default: 0 }
+                username: { type: 'string', minLength: 3, maxLength: 30, description: 'Username' },
+                take: { type: 'integer', minimum: 1, maximum: 100, default: 20, description: 'Number of users to retrieve' },
+                skip: { type: 'integer', minimum: 0, default: 0, description: 'Number of users to skip' }
             },
-            required: []
+            required: [],
+            additionalProperties: false
         }
     }
 
@@ -31,45 +42,40 @@ module.exports = async function (fastify, opts) {
         body: {
             type: 'object',
             properties: {
+                user_id: { type: 'number', minimum: 1, description: 'User ID' },
                 username: { type: 'string', minLength: 3, maxLength: 30, description: 'Username' },
                 email: { type: 'string', format: 'email', description: 'Email address' },
                 first_name: { type: 'string', minLength: 1, maxLength: 50, description: 'First name' },
                 last_name: { type: 'string', minLength: 1, maxLength: 50, description: 'Last name' },
                 password: { type: 'string', minLength: 8, maxLength: 100, description: 'Password' }
             },
-            required: [],
+            required: ['user_id'],
             additionalProperties: false
         }
     }
 
     const deleteUserSchema = {
+        description: 'Delete a user by ID',
+        tags: ['User'],
+        summary: 'Delete user',
         body: {
             type: 'object',
             properties: {
+                user_id: { type: 'number', minimum: 1, description: 'User ID' },
             },
-            required: []
+            required: ['user_id'],
+            additionalProperties: false
         }
     }
 
-    const selectedUserInfo = {
-        id: true,
-        email: true,
-        username: true,
-        first_name: true,
-        last_name: true,
-    }
-
-    fastify.get('/', { schema: getUserSchema }, async function (request, reply) {
+    fastify.get('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: getUserSchema }, async function (request, reply) {
         const { user_id, username, take = 20, skip = 0 } = request.query
 
         if (user_id) {
-
             const userInfo = await prisma.user.findUnique({
-                where: {
-                    id: user_id
-                },
+                where: { id: user_id },
                 select: selectedUserInfo
-            })
+            });
 
             if (!userInfo) {
                 return reply.status(404).send({ message: "No user founded." });
@@ -87,31 +93,17 @@ module.exports = async function (fastify, opts) {
             take,
             skip,
             select: selectedUserInfo
-        })
+        });
 
-        return reply.status(200).send(usersInfo);
+        return reply.status(200).send({ usersInfo });
     })
 
-    fastify.get('/me', { onRequest: [fastify.authenticate], schema: updateUserSchema }, async function (request, reply) {
-        const { user } = request
+    fastify.put('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: updateUserSchema }, async function (request, reply) {
+        const { user_id, username, email, first_name, last_name, password } = request.body
 
         const userInfo = await prisma.user.findUnique({
             where: {
-                id: user.id
-            },
-            select: selectedUserInfo
-        })
-
-        return reply.status(200).send({ userInfo });
-    })
-
-    fastify.put('/', { onRequest: [fastify.authenticate], schema: updateUserSchema }, async function (request, reply) {
-        const { user } = request
-        const { username, email, first_name, last_name, password } = request.body
-
-        const userInfo = await prisma.user.findUnique({
-            where: {
-                id: user.id
+                id: user_id
             },
             select: selectedUserInfo
         })
@@ -120,9 +112,21 @@ module.exports = async function (fastify, opts) {
             return reply.status(404).send({ message: "No user founded." });
         }
 
-        const updatedUser = await prisma.user.update({
+        if (email && email !== userInfo.email) {
+            const emailExists = await prisma.user.findUnique({
+                where: {
+                    email
+                }
+            });
+
+            if (emailExists) {
+                return reply.status(400).send({ message: "Email already used." });
+            }
+        }
+
+        await prisma.user.update({
             where: {
-                id: user.id
+                id: user_id
             },
             data: {
                 username: username || userInfo.username,
@@ -137,12 +141,12 @@ module.exports = async function (fastify, opts) {
         return reply.status(204).send({ message: "User updated" });
     })
 
-    fastify.delete('/', { onRequest: [fastify.authenticate], schema: deleteUserSchema }, async function (request, reply) {
-        const { user } = request
+    fastify.delete('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: deleteUserSchema }, async function (request, reply) {
+        const { user_id } = request.body
 
         const userInfo = await prisma.user.findUnique({
             where: {
-                id: user.id
+                id: user_id
             },
             select: selectedUserInfo
         })
@@ -153,7 +157,7 @@ module.exports = async function (fastify, opts) {
 
         const deletedUser = await prisma.user.delete({
             where: {
-                id: user.id
+                id: user_id
             },
             select: selectedUserInfo
         })

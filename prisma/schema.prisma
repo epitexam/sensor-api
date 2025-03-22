@@ -35,7 +35,7 @@ model Room {
 model Sensor {
   id                  Int             @id @default(autoincrement())
   friendly_name       String          @unique @db.VarChar(255)
-  unit_of_measurement Int
+  unit_of_measurement String          @db.VarChar(255)
   Room                Room?           @relation(fields: [roomId], references: [id])
   roomId              Int?
   history             SensorHistory[]

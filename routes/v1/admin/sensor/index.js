@@ -22,7 +22,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Retrieve sensor information by ID, friendly name, or room ID. Supports pagination with take and skip parameters.',
         summary: 'Get sensor information',
-        tags: ['sensor-admin']
+        tags: ['sensor-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     };
 
     const createSensorSchema = {
@@ -38,7 +43,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Create a new sensor with a friendly name, unit of measurement, and optional room ID.',
         summary: 'Create sensor',
-        tags: ['sensor-admin']
+        tags: ['sensor-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     };
 
     const updateSensorSchema = {
@@ -54,7 +64,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Update sensor information such as friendly name and unit of measurement.',
         summary: 'Update sensor details',
-        tags: ['sensor-admin']
+        tags: ['sensor-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     };
 
     const deleteSensorSchema = {
@@ -67,7 +82,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Delete a sensor by its ID.',
         summary: 'Delete sensor',
-        tags: ['sensor-admin']
+        tags: ['sensor-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     };
 
     const selectedSensorInfo = {

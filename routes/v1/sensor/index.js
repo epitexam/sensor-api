@@ -22,7 +22,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Retrieve sensor information by ID, friendly name, or room ID. Supports pagination with take and skip parameters.',
         summary: 'Get sensor information',
-        tags: ['sensor']
+        tags: ['sensor'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     };
 
     const selectedSensorInfo = {
@@ -37,7 +42,7 @@ module.exports = async function (fastify, opts) {
         }
     };
 
-    fastify.get('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: getSensorSchema }, async function (request, reply) {
+    fastify.get('/', { onRequest: [fastify.authenticate], schema: getSensorSchema }, async function (request, reply) {
         const { id, friendly_name, room_id, take = 10, skip = 0 } = request.query;
 
         if (take > 100) {

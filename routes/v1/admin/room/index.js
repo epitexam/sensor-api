@@ -23,7 +23,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Retrieve room information by ID or name. Supports pagination with take and skip parameters.',
         summary: 'Get room information',
-        tags: [, 'room-admin']
+        tags: ['room-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     }
 
     const createRoomSchema = {
@@ -38,7 +43,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Create a new room with a name and volume.',
         summary: 'Create room',
-        tags: ['room-admin']
+        tags: ['room-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     }
 
     const updateRoomSchema = {
@@ -54,7 +64,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Update room information such as name and volume.',
         summary: 'Update room details',
-        tags: ['room-admin']
+        tags: ['room-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     }
 
     const deleteRoomSchema = {
@@ -68,7 +83,12 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Delete a room by its ID.',
         summary: 'Delete room',
-        tags: ['room-admin']
+        tags: ['room-admin'],
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
     }
 
     const selectedRoomInfo = {

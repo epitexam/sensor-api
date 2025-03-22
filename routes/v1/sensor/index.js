@@ -19,7 +19,10 @@ module.exports = async function (fastify, opts) {
                 skip: { type: 'number', minimum: 0, description: 'Number of sensors to skip' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Retrieve sensor information by ID, friendly name, or room ID. Supports pagination with take and skip parameters.',
+        summary: 'Get sensor information',
+        tags: ['sensor']
     };
 
     const selectedSensorInfo = {

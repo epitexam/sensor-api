@@ -19,11 +19,14 @@ module.exports = async function (fastify, opts) {
                 skip: { type: 'integer', minimum: 0, description: 'Number of rooms to skip' }
             },
             additionalProperties: false
-        }
+        },
+        tags: ['room'],
+        summary: 'Retrieve room information',
+        description: 'Fetches room details based on room_id or name. Supports pagination with take and skip parameters.'
     }
 
     const selectedRoomInfo = {
-        id:true,
+        id: true,
         name: true,
         volume: true,
         sensors: {

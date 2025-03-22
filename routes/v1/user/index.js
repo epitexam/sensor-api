@@ -21,12 +21,15 @@ module.exports = async function (fastify, opts) {
                 skip: { type: 'number', default: 0 }
             },
             required: []
-        }
+        },
+        description: 'Get user information by ID or username. Supports pagination with take and skip parameters.',
+        summary: 'Retrieve user information',
+        tags: ['user']
     }
 
     const updateUserSchema = {
-        description: 'Update user information',
-        tags: ['User'],
+        description: 'Update user information such as username, email, first name, last name, and password.',
+        tags: ['user'],
         summary: 'Update user details',
         body: {
             type: 'object',
@@ -43,6 +46,9 @@ module.exports = async function (fastify, opts) {
     }
 
     const deleteUserSchema = {
+        description: 'Delete a user by ID.',
+        tags: ['user'],
+        summary: 'Delete user',
         body: {
             type: 'object',
             properties: {

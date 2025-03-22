@@ -20,7 +20,10 @@ module.exports = async function (fastify, opts) {
                 skip: { type: 'number', minimum: 0, description: 'Number of rooms to skip' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Retrieve room information by ID or name. Supports pagination with take and skip parameters.',
+        summary: 'Get room information',
+        tags: [, 'room-admin']
     }
 
     const createRoomSchema = {
@@ -32,7 +35,10 @@ module.exports = async function (fastify, opts) {
                 volume: { type: 'number', minimum: 0, maximum: 10000, description: 'Volume of the room' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Create a new room with a name and volume.',
+        summary: 'Create room',
+        tags: ['room-admin']
     }
 
     const updateRoomSchema = {
@@ -45,7 +51,10 @@ module.exports = async function (fastify, opts) {
                 volume: { type: 'number', minimum: 0, maximum: 10000, description: 'Volume of the room' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Update room information such as name and volume.',
+        summary: 'Update room details',
+        tags: ['room-admin']
     }
 
     const deleteRoomSchema = {
@@ -56,7 +65,10 @@ module.exports = async function (fastify, opts) {
                 room_id: { type: 'number', minLength: 1, pattern: '^[a-fA-F0-9-]+$', description: 'Unique identifier for the room' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Delete a room by its ID.',
+        summary: 'Delete room',
+        tags: ['room-admin']
     }
 
     const selectedRoomInfo = {

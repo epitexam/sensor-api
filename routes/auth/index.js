@@ -16,11 +16,14 @@ module.exports = async function (fastify, opts) {
             type: 'object',
             required: ['email', 'password'],
             properties: {
-                email: { type: 'string', format: "email", minLength: 1, maxLength: 255, description: 'Email of the user' },
-                password: { type: 'string', minLength: 6, maxLength: 128, description: 'Password of the user' }
+                email: { type: 'string', format: "email", minLength: 1, maxLength: 255, description: 'The email address of the user' },
+                password: { type: 'string', minLength: 6, maxLength: 128, description: 'The password of the user' }
             },
-            additionalProperties: false
-        }
+            additionalProperties: false,
+        },
+        description: 'Schema for user login, requiring email and password fields. The email must be a valid email address and the password must be at least 6 characters long.',
+        summary: 'Authenticate user and return a token',
+        tags: ['auth', 'login']
     }
 
     const registerSchema = {
@@ -28,14 +31,17 @@ module.exports = async function (fastify, opts) {
             type: 'object',
             required: ['email', 'password', 'username', 'first_name', 'last_name'],
             properties: {
-                email: { type: 'string', format: "email", minLength: 1, maxLength: 255, description: 'Email of the user' },
-                password: { type: 'string', minLength: 6, maxLength: 128, description: 'Password of the user' },
-                username: { type: 'string', minLength: 1, maxLength: 50, description: 'Username of the user' },
-                first_name: { type: 'string', minLength: 1, maxLength: 50, description: 'First name of the user' },
-                last_name: { type: 'string', minLength: 1, maxLength: 50, description: 'Last name of the user' },
+                email: { type: 'string', format: "email", minLength: 1, maxLength: 255, description: 'The email address of the user' },
+                password: { type: 'string', minLength: 6, maxLength: 128, description: 'The password of the user' },
+                username: { type: 'string', minLength: 1, maxLength: 50, description: 'The username of the user' },
+                first_name: { type: 'string', minLength: 1, maxLength: 50, description: 'The first name of the user' },
+                last_name: { type: 'string', minLength: 1, maxLength: 50, description: 'The last name of the user' },
             },
-            additionalProperties: false
-        }
+            additionalProperties: false,
+        },
+        description: 'Schema for user registration, requiring email, password, username, first name, and last name fields. The email must be a valid email address, the password must be at least 6 characters long, and the username, first name, and last name must be between 1 and 50 characters long.',
+        summary: 'Register a new user',
+        tags: ['auth', 'register']
     }
 
     fastify.post('/login', { schema: loginSchema }, async function (request, reply) {
@@ -85,7 +91,7 @@ module.exports = async function (fastify, opts) {
                 first_name,
                 last_name
             },
-            
+
         })
 
         return reply.status(201).send({ message: "User registered successfully. You can now login." });

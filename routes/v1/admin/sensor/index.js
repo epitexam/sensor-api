@@ -19,7 +19,10 @@ module.exports = async function (fastify, opts) {
                 skip: { type: 'number', minimum: 0, description: 'Number of sensors to skip' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Retrieve sensor information by ID, friendly name, or room ID. Supports pagination with take and skip parameters.',
+        summary: 'Get sensor information',
+        tags: ['sensor-admin']
     };
 
     const createSensorSchema = {
@@ -32,7 +35,10 @@ module.exports = async function (fastify, opts) {
                 room_id: { type: 'number', minimum: 1, description: 'Unique identifier for the room' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Create a new sensor with a friendly name, unit of measurement, and optional room ID.',
+        summary: 'Create sensor',
+        tags: ['sensor-admin']
     };
 
     const updateSensorSchema = {
@@ -45,7 +51,10 @@ module.exports = async function (fastify, opts) {
                 unit_of_measurement: { type: 'number', minimum: 0, description: 'Unit of measurement for the sensor' }
             },
             additionalProperties: false
-        }
+        },
+        description: 'Update sensor information such as friendly name and unit of measurement.',
+        summary: 'Update sensor details',
+        tags: ['sensor-admin']
     };
 
     const deleteSensorSchema = {
@@ -55,7 +64,10 @@ module.exports = async function (fastify, opts) {
             properties: {
                 id: { type: 'number', minimum: 1, description: 'Unique identifier for the sensor' }
             }
-        }
+        },
+        description: 'Delete a sensor by its ID.',
+        summary: 'Delete sensor',
+        tags: ['sensor-admin']
     };
 
     const selectedSensorInfo = {

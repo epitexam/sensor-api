@@ -27,6 +27,22 @@ module.exports = async function (fastify, opts) {
         tags: ['user']
     }
 
+    const meUserSchema = {
+        querystring: {
+            type: 'object',
+            properties: {},
+            required: []
+        },
+        security: [
+            {
+                BearerAuth: []
+            }
+        ],
+        description: 'Retrieve the authenticated user\'s information.',
+        summary: 'Get authenticated user information',
+        tags: ['user']
+    }
+    
     const updateUserSchema = {
         description: 'Update user information such as username, email, first name, last name, and password.',
         tags: ['user'],
@@ -108,7 +124,7 @@ module.exports = async function (fastify, opts) {
         return reply.status(200).send(usersInfo);
     })
 
-    fastify.get('/me', { onRequest: [fastify.authenticate], schema: getUserSchema }, async function (request, reply) {
+    fastify.get('/me', { onRequest: [fastify.authenticate], schema: meUserSchema }, async function (request, reply) {
         const { user } = request
 
         const userInfo = await prisma.user.findUnique({

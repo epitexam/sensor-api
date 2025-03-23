@@ -36,7 +36,7 @@ module.exports = async function (fastify, opts) {
             required: ['friendly_name', 'unit_of_measurement'],
             properties: {
                 friendly_name: { type: 'string', minLength: 1, maxLength: 255, description: 'Friendly name of the sensor' },
-                unit_of_measurement: { type: 'number', minimum: 0, description: 'Unit of measurement for the sensor' },
+                unit_of_measurement: { type: 'string', minLength: 1, maxLength: 255, description: 'Unit of measurement for the sensor' },
                 room_id: { type: 'number', minimum: 1, description: 'Unique identifier for the room' }
             },
             additionalProperties: false
@@ -58,7 +58,7 @@ module.exports = async function (fastify, opts) {
             properties: {
                 id: { type: 'number', minimum: 1, description: 'Unique identifier for the sensor' },
                 friendly_name: { type: 'string', minLength: 1, maxLength: 255, description: 'Friendly name of the sensor' },
-                unit_of_measurement: { type: 'number', minimum: 0, description: 'Unit of measurement for the sensor' }
+                unit_of_measurement: { type: 'string', minLength: 1, maxLength: 255, description: 'Unit of measurement for the sensor' }
             },
             additionalProperties: false
         },

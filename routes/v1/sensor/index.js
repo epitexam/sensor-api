@@ -15,8 +15,8 @@ module.exports = async function (fastify, opts) {
                 id: { type: 'number', minimum: 1, description: 'Unique identifier for the sensor' },
                 friendly_name: { type: 'string', minLength: 1, maxLength: 255, description: 'Friendly name of the sensor' },
                 room_id: { type: 'number', minimum: 1, description: 'Unique identifier for the room' },
-                take: { type: 'number', minimum: 0, maximum: 100, description: 'Number of sensors to retrieve' },
-                skip: { type: 'number', minimum: 0, description: 'Number of sensors to skip' }
+                take: { type: 'number', minimum: 0, maximum: 100, default: 20, description: 'Number of sensors to retrieve' },
+                skip: { type: 'number', minimum: 0, default: 0, description: 'Number of sensors to skip' }
             },
             additionalProperties: false
         },
@@ -43,7 +43,7 @@ module.exports = async function (fastify, opts) {
     };
 
     fastify.get('/', { onRequest: [fastify.authenticate], schema: getSensorSchema }, async function (request, reply) {
-        const { id, friendly_name, room_id, take = 10, skip = 0 } = request.query;
+        const { id, friendly_name, room_id, take = 20, skip = 0 } = request.query;
 
         if (take > 100) {
             return reply.code(400).send({ message: 'The "take" parameter must be less than or equal to 100' });

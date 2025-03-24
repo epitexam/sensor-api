@@ -23,7 +23,7 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Schema for user login, requiring email and password fields. The email must be a valid email address and the password must be at least 6 characters long.',
         summary: 'Authenticate user and return a token',
-        tags: ['auth', 'login']
+        tags: ['auth']
     }
 
     const registerSchema = {
@@ -41,7 +41,7 @@ module.exports = async function (fastify, opts) {
         },
         description: 'Schema for user registration, requiring email, password, username, first name, and last name fields. The email must be a valid email address, the password must be at least 6 characters long, and the username, first name, and last name must be between 1 and 50 characters long.',
         summary: 'Register a new user',
-        tags: ['auth', 'register']
+        tags: ['auth']
     }
 
     fastify.post('/login', { schema: loginSchema }, async function (request, reply) {

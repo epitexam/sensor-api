@@ -1,5 +1,7 @@
 'use strict'
 
+const { PrismaClient } = require('@prisma/client')
+
 module.exports = async function (fastify, opts) {
 
     /** 
@@ -14,8 +16,8 @@ module.exports = async function (fastify, opts) {
                 sensor_id: { type: 'number', description: 'Unique identifier for the sensor' },
                 start_date: { type: 'string', format: 'date-time', description: 'Start date for the history range' },
                 end_date: { type: 'string', format: 'date-time', description: 'End date for the history range' },
-                take: { type: 'number', minimum: 0, maximum: 100, description: 'Number of records to retrieve' },
-                skip: { type: 'number', minimum: 0, description: 'Number of records to skip' }
+                take: { type: 'number', minimum: 0, maximum: 100, default: 20, description: 'Number of records to retrieve' },
+                skip: { type: 'number', minimum: 0, default: 0, description: 'Number of records to skip' }
             },
             additionalProperties: false
         },
@@ -74,13 +76,19 @@ module.exports = async function (fastify, opts) {
     }
 
     fastify.get('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: getSensorHistorySchema }, async function (request, reply) {
-        const { sensor_id, start_date, end_date, take, skip } = request.query
-        const sensorHistories = await fastify.prisma.sensorHistory.findMany({
+        const { sensor_id, start_date, end_date, take = 20, skip = 0 } = request.query
+
+        const validStartDate = start_date ? new Date(start_date) : null;
+        const validEndDate = end_date ? new Date(end_date) : null;
+
+        const sensorHistories = await prisma.sensorHistory.findMany({
             where: {
-                sensor_id,
+                sensor: {
+                    id: sensor_id
+                },
                 recorded_at: {
-                    gte: new Date(start_date),
-                    lte: new Date(end_date)
+                    gte: validStartDate ? validStartDate : undefined,
+                    lte: validEndDate ? validEndDate : undefined
                 }
             },
             take,
@@ -94,7 +102,7 @@ module.exports = async function (fastify, opts) {
 
         const { sensor_id, state, recorded_at } = request.body
 
-        const sensorInfo = await fastify.prisma.sensor.findUnique({
+        const sensorInfo = await prisma.sensor.findUnique({
             where: {
                 id: sensor_id
             }
@@ -106,9 +114,13 @@ module.exports = async function (fastify, opts) {
             })
         }
 
-        const sensorHistory = await fastify.prisma.sensorHistory.create({
+        const sensorHistory = await prisma.sensorHistory.create({
             data: {
-                sensor_id,
+                sensor:{
+                    connect: {
+                        id: sensor_id
+                    }
+                },
                 state,
                 recorded_at: new Date(recorded_at)
             }
@@ -119,7 +131,7 @@ module.exports = async function (fastify, opts) {
 
     fastify.delete('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: deleteSensorHistorySchema }, async function (request, reply) {
         const { history_ids } = request.body
-        const sensorHistories = await fastify.prisma.sensorHistory.deleteMany({
+        const sensorHistories = await prisma.sensorHistory.deleteMany({
             where: {
                 id: {
                     in: history_ids

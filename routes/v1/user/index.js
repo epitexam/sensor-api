@@ -1,7 +1,6 @@
 'use strict'
 const { PrismaClient } = require('@prisma/client')
 const argon2 = require('argon2');
-const user = require('../admin/user');
 
 module.exports = async function (fastify, opts) {
 
@@ -15,7 +14,6 @@ module.exports = async function (fastify, opts) {
         querystring: {
             type: 'object',
             properties: {
-                user_id: { type: 'number', minimum: 1, description: 'User ID' },
                 username: { type: 'string', minLength: 1, maxLength: 50, description: 'Username' },
                 take: { type: 'number', default: 20 },
                 skip: { type: 'number', default: 0 }
@@ -42,7 +40,7 @@ module.exports = async function (fastify, opts) {
         summary: 'Get authenticated user information',
         tags: ['user']
     }
-    
+
     const updateUserSchema = {
         description: 'Update user information such as username, email, first name, last name, and password.',
         tags: ['user'],
@@ -92,23 +90,7 @@ module.exports = async function (fastify, opts) {
     }
 
     fastify.get('/', { schema: getUserSchema }, async function (request, reply) {
-        const { user_id, username, take = 20, skip = 0 } = request.query
-
-        if (user_id) {
-
-            const userInfo = await prisma.user.findUnique({
-                where: {
-                    id: user_id
-                },
-                select: selectedUserInfo
-            })
-
-            if (!userInfo) {
-                return reply.status(404).send({ message: "No user founded." });
-            }
-
-            return reply.status(200).send(userInfo);
-        }
+        const { username, take = 20, skip = 0 } = request.query
 
         const usersInfo = await prisma.user.findMany({
             where: {
@@ -134,11 +116,16 @@ module.exports = async function (fastify, opts) {
             select: selectedUserInfo
         })
 
+        if (!userInfo) {
+            return reply.status(404).send({ message: "No user founded." });
+        }
+
         return reply.status(200).send({ userInfo });
     })
 
     fastify.put('/', { onRequest: [fastify.authenticate], schema: updateUserSchema }, async function (request, reply) {
         const { user } = request
+
         const { username, email, first_name, last_name, password } = request.body
 
         const userInfo = await prisma.user.findUnique({
@@ -157,11 +144,11 @@ module.exports = async function (fastify, opts) {
                 id: user.id
             },
             data: {
-                username: username || userInfo.username,
-                email: email || userInfo.email,
-                first_name: first_name || userInfo.first_name,
-                last_name: last_name || userInfo.last_name,
-                password: password ? await argon2.hash(password) : userInfo.password
+                username,
+                email,
+                first_name,
+                last_name,
+                password: await argon2.hash(password)
             },
             select: selectedUserInfo
         })

@@ -1,4 +1,5 @@
 'use strict'
+
 const { PrismaClient } = require('@prisma/client')
 
 module.exports = async function (fastify, opts) {

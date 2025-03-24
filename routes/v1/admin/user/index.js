@@ -30,7 +30,6 @@ module.exports = async function (fastify, opts) {
         querystring: {
             type: 'object',
             properties: {
-                user_id: { type: 'number', minimum: 1, description: 'User ID' },
                 username: { type: 'string', minLength: 3, maxLength: 30, description: 'Username' },
                 take: { type: 'integer', minimum: 1, maximum: 100, default: 20, description: 'Number of users to retrieve' },
                 skip: { type: 'integer', minimum: 0, default: 0, description: 'Number of users to skip' }
@@ -84,11 +83,13 @@ module.exports = async function (fastify, opts) {
     }
 
     fastify.get('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: getUserSchema }, async function (request, reply) {
-        const { user_id, username, take = 20, skip = 0 } = request.query
+        const { username, take = 20, skip = 0 } = request.query
 
         if (user_id) {
             const userInfo = await prisma.user.findUnique({
-                where: { id: user_id },
+                where: {
+                    username
+                },
                 select: selectedUserInfo
             });
 

@@ -1,6 +1,6 @@
 'use strict'
-const { PrismaClient } = require('@prisma/client')
 
+const { PrismaClient } = require('@prisma/client')
 
 module.exports = async function (fastify, opts) {
 
@@ -57,6 +57,7 @@ module.exports = async function (fastify, opts) {
             required: ['room_id', 'name', 'volume'],
             properties: {
                 room_id: { type: 'number', minLength: 1, pattern: '^[a-fA-F0-9-]+$', description: 'Unique identifier for the room' },
+                room_name: { type: 'string', minLength: 1, maxLength: 255, description: 'Unique name identifier for the room' },
                 name: { type: 'string', minLength: 1, maxLength: 255, description: 'Name of the room' },
                 volume: { type: 'number', minimum: 0, maximum: 10000, description: 'Volume of the room' }
             },
@@ -157,30 +158,40 @@ module.exports = async function (fastify, opts) {
     fastify.post('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: createRoomSchema }, async function (request, reply) {
         const { name, volume } = request.body
 
-        const roomInfo = await prisma.room.findUnique({ where: { name } })
+        const existingRoom = await prisma.room.findUnique({
+            where: {
+                name
+            }
+        })
 
-        if (roomInfo) {
+        if (existingRoom) {
             return reply.code(409).send({
-                message: 'Room already exists'
+                message: 'Room name already exists'
             })
         }
 
+        // Utiliser ca signigie qu'il y a un probleme avec prisma mais je ne sais pas comment le resoudre
+
+        const totalRooms = await prisma.room.count()
+
         const room = await prisma.room.create({
             data: {
+                id: totalRooms + 1,
                 name,
-                volume,
-            },
+                volume
+            }
         })
 
-        return reply.code(201).send({})
+        return reply.code(201).send({ room })
     })
 
-    fastify.put('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: updateRoomSchema }, async function (request, reply) {
-        const { room_id, name, volume } = request.body
+    fastify.put('/', { onRequest: [], schema: updateRoomSchema }, async function (request, reply) {
+        const {room_name, room_id, name, volume } = request.body
 
         const roomInfo = await prisma.room.findUnique({
             where: {
-                id: room_id
+                id: room_id,
+                name: room_name
             }
         })
 

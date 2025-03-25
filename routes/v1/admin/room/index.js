@@ -185,7 +185,7 @@ module.exports = async function (fastify, opts) {
         return reply.code(201).send({ room })
     })
 
-    fastify.put('/', { onRequest: [], schema: updateRoomSchema }, async function (request, reply) {
+    fastify.put('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: updateRoomSchema }, async function (request, reply) {
         const {room_name, room_id, name, volume } = request.body
 
         const roomInfo = await prisma.room.findUnique({

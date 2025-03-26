@@ -30,7 +30,7 @@ module.exports = async function (fastify, opts) {
         querystring: {
             type: 'object',
             properties: {
-                user_id: { type: 'integer', minimum: 1, , default: 1, description: 'User id' },
+                user_id: { type: 'integer', minimum: 1, default: 1, description: 'User id' },
                 username: { type: 'string', minLength: 3, maxLength: 30, description: 'Username' },
                 take: { type: 'integer', minimum: 1, maximum: 100, default: 20, description: 'Number of users to retrieve' },
                 skip: { type: 'integer', minimum: 0, default: 0, description: 'Number of users to skip' }

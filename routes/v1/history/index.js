@@ -1,4 +1,5 @@
 'use strict'
+const { PrismaClient } = require('@prisma/client')
 
 module.exports = async function (fastify, opts) {
 
@@ -31,9 +32,11 @@ module.exports = async function (fastify, opts) {
 
     fastify.get('/', { onRequest: [fastify.authenticate], schema: getSensorHistorySchema }, async function (request, reply) {
         const { sensor_id, start_date, end_date, take, skip } = request.query
-        const sensorHistories = await fastify.prisma.sensorHistory.findMany({
+        const sensorHistories = await prisma.sensorHistory.findMany({
             where: {
-                sensor_id,
+                sensor:{
+                    id:sensor_id
+                }
                 recorded_at: {
                     gte: new Date(start_date),
                     lte: new Date(end_date)

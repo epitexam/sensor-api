@@ -36,7 +36,7 @@ module.exports = async function (fastify, opts) {
             where: {
                 sensor:{
                     id:sensor_id
-                }
+                },
                 recorded_at: {
                     gte: new Date(start_date),
                     lte: new Date(end_date)

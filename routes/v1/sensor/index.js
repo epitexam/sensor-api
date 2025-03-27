@@ -50,20 +50,21 @@ module.exports = async function (fastify, opts) {
         }
 
         const sensors = await prisma.sensor.findMany({
-            where: {
-                ...(id && { id }),
-                ...(friendly_name && { friendly_name }),
-                ...(room_id && { roomId: room_id })
-            },
             take,
             skip,
-            select: selectedSensorInfo
-        });
+            where: {
+                id: id ? id : undefined,
+                friendly_name: friendly_name ? {
+                    contains: friendly_name,
+                } : undefined,
+                roomId: room_id ? room_id : undefined
+            },
+        })
 
         if (sensors.length === 0) {
             return reply.status(404).send({ error: 'No sensors found' });
         }
 
-        return reply.send({ sensors });
+        return reply.send({ sensors, take });
     });
 };

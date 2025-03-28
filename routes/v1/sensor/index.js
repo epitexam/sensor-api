@@ -54,9 +54,7 @@ module.exports = async function (fastify, opts) {
             skip,
             where: {
                 id: id ? id : undefined,
-                friendly_name: friendly_name ? {
-                    contains: friendly_name,
-                } : undefined,
+                ...(friendly_name && { friendly_name: { contains: friendly_name } }),
                 roomId: room_id ? room_id : undefined
             },
         })

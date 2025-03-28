@@ -100,7 +100,7 @@ module.exports = async function (fastify, opts) {
         const sensors = await prisma.sensor.findMany({
             where: {
                 ...(id && { id }),
-                ...(friendly_name && { friendly_name }),
+                ...(friendly_name && { friendly_name: { contains: friendly_name } }),
                 ...(room_id && { roomId: room_id })
             },
             take: take ? parseInt(take) : undefined,

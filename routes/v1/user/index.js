@@ -94,9 +94,8 @@ module.exports = async function (fastify, opts) {
 
         const usersInfo = await prisma.user.findMany({
             where: {
-                username: {
-                    contains: username
-                }
+                ...(username && { username: { contains: username } }),
+
             },
             take,
             skip,

@@ -11,13 +11,14 @@ module.exports = async function (fastify, opts) {
     const getSensorHistorySchema = {
         querystring: {
             type: 'object',
+            required: ['friendly_name'],
             properties: {
                 friendly_name: { type: 'string', minLength: 1, maxLength: 255, description: 'Friendly name of the sensor' },
                 sensor_id: { type: 'number', description: 'Unique identifier for the sensor' },
                 start_date: { type: 'string', format: 'date-time', description: 'Start date for the history range' },
                 end_date: { type: 'string', format: 'date-time', description: 'End date for the history range' },
-                take: { type: 'number', minimum: 0, maximum: 100, description: 'Number of records to retrieve' },
-                skip: { type: 'number', minimum: 0, description: 'Number of records to skip' }
+                take: { type: 'number', default: 20, minimum: 0, maximum: 100, description: 'Number of records to retrieve' },
+                skip: { type: 'number', default: 0, minimum: 0, description: 'Number of records to skip' }
             },
             additionalProperties: false
         },
@@ -43,7 +44,7 @@ module.exports = async function (fastify, opts) {
         if (sensor_id && sensorInfo.id !== sensor_id) {
             return reply.code(400).send({ message: 'Sensor ID does not match the friendly name provided' })
         }
-        
+
         const validStartDate = start_date ? new Date(start_date) : null;
         const validEndDate = end_date ? new Date(end_date) : null;
 

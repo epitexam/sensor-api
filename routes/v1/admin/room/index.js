@@ -14,7 +14,7 @@ module.exports = async function (fastify, opts) {
         querystring: {
             type: 'object',
             properties: {
-                room_id: { type: 'number', minLength: 1, pattern: '^[a-fA-F0-9-]+$', description: 'Unique identifier for the room' },
+                room_id: { type: 'number', minimum: 1, description: 'Unique identifier for the room' },
                 name: { type: 'string', minLength: 1, maxLength: 255, description: 'Name of the room' },
                 take: { type: 'number', minimum: 0, maximum: 100, description: 'Number of rooms to retrieve' },
                 skip: { type: 'number', minimum: 0, description: 'Number of rooms to skip' }
@@ -56,7 +56,7 @@ module.exports = async function (fastify, opts) {
             type: 'object',
             required: ['room_id', 'name', 'volume'],
             properties: {
-                room_id: { type: 'number', minLength: 1, pattern: '^[a-fA-F0-9-]+$', description: 'Unique identifier for the room' },
+                room_id: { type: 'number', minimum: 1, description: 'Unique identifier for the room' },
                 room_name: { type: 'string', minLength: 1, maxLength: 255, description: 'Unique name identifier for the room' },
                 name: { type: 'string', minLength: 1, maxLength: 255, description: 'Name of the room' },
                 volume: { type: 'number', minimum: 0, maximum: 10000, description: 'Volume of the room' }
@@ -78,7 +78,7 @@ module.exports = async function (fastify, opts) {
             type: 'object',
             required: ['room_id'],
             properties: {
-                room_id: { type: 'number', minLength: 1, pattern: '^[a-fA-F0-9-]+$', description: 'Unique identifier for the room' }
+                room_id: { type: 'number', minimum: 1, description: 'Unique identifier for the room' }
             },
             additionalProperties: false
         },

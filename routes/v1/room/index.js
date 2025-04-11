@@ -14,7 +14,7 @@ module.exports = async function (fastify, opts) {
         querystring: {
             type: 'object',
             properties: {
-                room_id: { type: 'number', minLength: 1, pattern: '^[a-fA-F0-9-]+$', description: 'Unique identifier for the room' },
+                room_id: { type: 'number', minimum: 1, description: 'Unique identifier for the room' },
                 name: { type: 'string', minLength: 1, maxLength: 255, description: 'Name of the room' },
                 take: { type: 'integer', minimum: 0, maximum: 100, description: 'Number of rooms to retrieve' },
                 skip: { type: 'integer', minimum: 0, description: 'Number of rooms to skip' }

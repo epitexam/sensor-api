@@ -1,42 +1,38 @@
 'use strict'
 
-const fp = require("fastify-plugin");
-
-const swagger = require("@fastify/swagger");
-const swagger_ui = require("@fastify/swagger-ui");
+const fp = require('fastify-plugin');
+const swagger = require('@fastify/swagger');
+const swaggerUI = require('@fastify/swagger-ui');
 
 module.exports = fp(async function (fastify, opts) {
 
-    fastify.register(swagger, {
-        swagger: {
-            info: {
-                title: 'API avec JWT',
-                description: 'Documentation API sécurisée avec JWT',
-                version: '1.0.0'
-            },
-            securityDefinitions: {
-                BearerAuth: {
-                    type: 'apiKey',
-                    in: 'header',
-                    name: 'Authorization',
-                    description: 'JWT Bearer token'
-                }
-            },
+  // Swagger spec
+  fastify.register(swagger, {
+    swagger: {
+      info: {
+        title: 'API avec JWT',
+        description: 'Documentation API sécurisée avec JWT',
+        version: '1.0.0'
+      },
+      securityDefinitions: {
+        BearerAuth: {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+          description: 'JWT Bearer token'
         }
-    });
+      }
+    }
+  });
 
-    fastify.register(swagger_ui, {
-        routePrefix: '/documentation',
-        uiConfig: {
-            deepLinking: false
-        },
-        uiHooks: {
-            onRequest: function (request, reply, next) { next() },
-            preHandler: function (request, reply, next) { next() }
-        },
-        staticCSP: true,
-        transformStaticCSP: (header) => header,
-        transformSpecification: (swaggerObject, request, reply) => { return swaggerObject },
-        transformSpecificationClone: true
-    });
+  // Swagger UI
+  fastify.register(swaggerUI, {
+    routePrefix: '/documentation', // Accessible via /documentation
+    exposeRoute: true,             // Important pour l'exposition en prod
+    staticCSP: true,               // Corrige les erreurs de chargement en prod
+    transformStaticCSP: (header) => header,
+    uiConfig: {
+      deepLinking: true,           // Permet les liens directs vers des routes
+    },
+  });
 });

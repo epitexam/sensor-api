@@ -26,7 +26,14 @@ module.exports = async function (fastify, opts) {
     options: Object.assign({}, opts)
   })
 
-  fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' });
+  if (require.main === module) {
+    fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' }, (err) => {
+      if (err) {
+        fastify.log.error(err)
+        process.exit(1)
+      }
+    })
+  }
 }
 
 module.exports.options = options

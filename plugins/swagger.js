@@ -29,8 +29,7 @@ module.exports = fp(async function (fastify, opts) {
   fastify.register(swaggerUI, {
     routePrefix: '/documentation', // Accessible via /documentation
     exposeRoute: true,             // Important pour l'exposition en prod
-    staticCSP: true,               // Corrige les erreurs de chargement en prod
-    transformStaticCSP: (header) => header,
+    // staticCSP: true,               // Désactivé pour environnement de développement
     uiConfig: {
       deepLinking: true,           // Permet les liens directs vers des routes
     },

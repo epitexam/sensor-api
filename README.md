@@ -1,89 +1,101 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
-This project was bootstrapped with Fastify-CLI.
+# Sensor API
 
-## Environment Setup
+Sensor API est une application backend construite avec **Fastify** et **Prisma** pour gérer des capteurs, des salles et des utilisateurs.
 
-Copy the `.env.test` file and rename it to `.env` with the real variables. Make sure to provide valid environment variables.
+## Fonctionnalités principales
 
-## First Commands
+- **Gestion des utilisateurs** : Inscription, connexion, et gestion des rôles.
+- **Gestion des capteurs** : Création, mise à jour, suppression, et historique des capteurs.
+- **Gestion des salles** : Création, mise à jour, suppression, et association avec des capteurs.
+- **Authentification sécurisée** : Basée sur **JWT** avec contrôle des rôles.
+- **Documentation interactive** : Générée automatiquement avec **Swagger**.
+- **Limitation de débit** : Protection contre les abus avec **Rate Limit**.
 
-Before starting development, run the following commands:
+## Configuration de l'environnement
+
+Copiez le fichier `.env.test` et renommez-le en `.env` avec les variables réelles. Assurez-vous de fournir des variables d'environnement valides.
+
+## Commandes initiales
+
+Avant de commencer le développement, exécutez les commandes suivantes :
 
 ### `yarn install`
 
-To install the dependencies.
+Pour installer les dépendances.
 
 ### `yarn prisma db push`
 
-To push the Prisma schema to the database.
+Pour appliquer le schéma Prisma à la base de données.
 
 ### `yarn prisma seed`
 
-To populate the database with fake data (see `prisma/seed.js` for details).
+Pour peupler la base de données avec des données factices (voir `prisma/seed.js` pour les détails).
 
-## Available Scripts
+## Scripts disponibles
 
-In the project directory, you can run:
+Dans le répertoire du projet, vous pouvez exécuter :
 
 ### `yarn run dev`
 
-Start the app in development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Démarrez l'application en mode développement.\
+Ouvrez [http://localhost:3000](http://localhost:3000) pour la visualiser dans le navigateur.
 
 ### `yarn start`
 
-Start the app in production mode.
+Démarrez l'application en mode production.
 
 ### `yarn run test`
 
-Run the test cases using Node.js's built-in test runner.
+Exécutez les tests avec le framework de test intégré de Node.js.
 
 ### `yarn prisma studio`
 
-Launch Prisma Studio to visually inspect and manage your database.
+Lancez Prisma Studio pour inspecter et gérer visuellement votre base de données.
 
-## Plugins Used
+## Plugins utilisés
 
 ### Prisma
-- **Description**: ORM for database management.
-- **Features**: Simplifies database queries, supports migrations, and provides a visual interface via Prisma Studio.
+- **Description** : ORM pour la gestion de la base de données.
+- **Fonctionnalités** : Simplifie les requêtes, prend en charge les migrations, et offre une interface visuelle via Prisma Studio.
 
 ### JWT
-- **Description**: Handles authentication using JSON Web Tokens.
-- **Features**: Stateless authentication, token expiration, and role-based access control.
+- **Description** : Gestion de l'authentification avec JSON Web Tokens.
+- **Fonctionnalités** : Authentification sans état, expiration des tokens, et contrôle d'accès basé sur les rôles.
 
 ### Swagger
-- **Description**: Generates interactive API documentation.
-- **Access**: Visit `/documentation` in your browser to explore the API.
+- **Description** : Génère une documentation interactive pour l'API.
+- **Accès** : Visitez `/documentation` dans votre navigateur pour explorer l'API.
 
 ### Rate Limit
-- **Description**: Limits the number of requests per minute to prevent abuse.
-- **Default**: 150 requests per minute (configurable via the `RATE_LIMIT` environment variable).
+- **Description** : Limite le nombre de requêtes par minute pour prévenir les abus.
+- **Par défaut** : 150 requêtes par minute (configurable via la variable d'environnement `RATE_LIMIT`).
 
-## Testing
+## Tests
 
-### Running Tests
-Run the following command to execute all test cases:
+### Exécution des tests
+Exécutez la commande suivante pour lancer tous les tests :
 ```bash
 yarn run test
 ```
 
-### Test Files
-Test files are located in the `test` directory and follow the structure of the application.
+### Fichiers de test
+Les fichiers de test se trouvent dans le répertoire `test` et suivent la structure de l'application.
 
-## Deployment
+## Déploiement
 
 ### PM2
-The project includes a PM2 configuration file (`deployment/pm2.config.js`) for managing the application in production.
+Le projet inclut un fichier de configuration PM2 (`deployment/pm2.config.js`) pour gérer l'application en production.
 
 ### Docker
-A `docker-compose.yml` file is provided to set up a PostgreSQL database for the application.
+Un fichier `docker-compose.yml` est fourni pour configurer une base de données PostgreSQL pour l'application.
 
-## Learn More
+## Acknowledgments
 
-To learn more about Fastify, check out the [Fastify documentation](https://fastify.dev/docs/latest/).
-To learn more about Prisma, visit the [Prisma documentation](https://www.prisma.io/docs/).
+- Part of the code and documentation for this project was generated with the assistance of **GitHub Copilot**, an AI programming assistant.
+
+## En savoir plus
+
+Pour en savoir plus sur Fastify, consultez la [documentation officielle de Fastify](https://fastify.dev/docs/latest/).  
+Pour en savoir plus sur Prisma, visitez la [documentation officielle de Prisma](https://www.prisma.io/docs/).
 
 ---
-
-*Note: Some parts of this documentation and the codebase were generated with the assistance of GitHub Copilot.*

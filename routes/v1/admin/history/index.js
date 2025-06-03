@@ -2,6 +2,21 @@
 
 const { PrismaClient } = require('@prisma/client');
 const { getSensorHistorySchema, createSensorHistorySchema, deleteSensorHistorySchema } = require('../../../../schemas/admin/history');
+const axios = require("axios")
+
+const sendEmailToMultipleRecipients = require("../../../../functions/sendMailpit")
+
+function isValidDate(dateString) {
+  // Vérifie si la date est au format ISO 8601
+  const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
+  if (!regex.test(dateString)) {
+    return false; // Si la chaîne ne correspond pas au format attendu
+  }
+
+  // Convertit la chaîne en objet Date et vérifie si la date est valide
+  const date = new Date(dateString);
+  return !isNaN(date.getTime()); // Retourne true si la date est valide
+}
 
 module.exports = async function (fastify, opts) {
   /** 
@@ -57,9 +72,24 @@ module.exports = async function (fastify, opts) {
 
     const { friendly_name, state, recorded_at } = request.body;
 
+    let mailStatus = false
+
+    if (!isValidDate(recorded_at)) {
+      return reply.code(400).send({
+        message: 'The date send is not valid'
+      });
+    }
+
     const sensorInfo = await prisma.sensor.findUnique({
       where: {
         friendly_name
+      },
+      select: {
+        Room: {
+          select: {
+            name: true
+          }
+        }
       }
     });
 
@@ -67,6 +97,39 @@ module.exports = async function (fastify, opts) {
       return reply.code(404).send({
         message: 'Sensor not found'
       });
+    }
+
+    if (state > 800) {
+      const subscribersEmails = await prisma.room.findUnique({
+        where: {
+          name: sensorInfo.Room.name
+        },
+        select: {
+          subscription: {
+            select: {
+              user: {
+                select: {
+                  email: true
+                }
+              }
+            }
+          }
+        }
+      })
+
+      const emails = subscribersEmails.subscription.map(subscriber => subscriber.user['email']);
+
+
+      sendEmailToMultipleRecipients(emails, state, sensorInfo.Room.name)
+        .then(() => {
+          console.log('Alerte envoyée avec succès');
+          mailStatus = true
+        })
+        .catch((err) => {
+          mailStatus = false
+          console.error('Erreur d\'envoi d\'alerte:', err);
+        });
+
     }
 
     const sensorHistory = await prisma.sensorHistory.create({
@@ -81,7 +144,7 @@ module.exports = async function (fastify, opts) {
       }
     });
 
-    return reply.status(201).send({ sensorHistory });
+    return reply.status(201).send({ sensorHistory, mailStatus });
   });
 
   fastify.delete('/', { onRequest: [fastify.authenticate, fastify.isAdmin], schema: deleteSensorHistorySchema }, async function (request, reply) {

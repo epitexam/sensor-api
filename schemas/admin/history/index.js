@@ -29,7 +29,7 @@ const createSensorHistorySchema = {
     properties: {
       friendly_name: { type: 'string', minLength: 1, maxLength: 255, description: 'Friendly name of the sensor' },
       state: { type: 'number', description: 'State of the sensor' },
-      recorded_at: { type: 'string', format: 'date-time', description: 'Timestamp when the state was recorded' }
+      recorded_at: { type: 'string', format: 'date-time', description: 'Timestamp when the state was recorded', default: new Date().toISOString() }
     },
     additionalProperties: false
   },
